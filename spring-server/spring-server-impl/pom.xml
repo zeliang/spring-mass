@@ -6,4 +6,16 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>spring-server-impl</artifactId>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.lzl</groupId>
+  		<artifactId>spring-server-dao</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.lzl</groupId>
+  		<artifactId>spring-server-service</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>
