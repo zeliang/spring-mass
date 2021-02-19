@@ -1,24 +1,41 @@
 package com.lzl.spring.server.effect.blockingqueue;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 public class Main {
 	public static void main(String[] args) {
-		LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<String>();
+		ExecutorService es= new ThreadPoolExecutor(2, 2,
+				0L, TimeUnit.MILLISECONDS,
+				new LinkedBlockingQueue<Runnable>(3), new RejectedExecutionHandler() {
+			@Override
+			public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+				if (!executor.isShutdown()) {
+					try {
+						executor.getQueue().put(r);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 
 		for (int i = 0; i < 10; i++) {
-			Thread p = new Thread(new Productor(queue));
-			p.start();
+			es.submit(new MyRunnable(i));
+		}
+	}
+
+	public static class MyRunnable implements Runnable{
+
+		private int i;
+
+		public MyRunnable(int i) {
+			this.i = i;
 		}
 
-		for (int i = 0; i < 10; i++) {
-			Thread c = new Thread(new Conusumer(queue));
-			c.start();
-		}
-		new Thread(new Monitor(queue)).start();
-		synchronized (Main.class) {
+		public void run() {
 			try {
-				Main.class.wait();
+				System.out.println(i+" is running");
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
